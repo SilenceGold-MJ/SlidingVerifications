@@ -58,31 +58,34 @@ def Sliding():
         }
         list_dic.append(dic_ls)
     datasort = sorted(list_dic, key=lambda e: e.__getitem__('val'))  #
+    #logger.info(datasort)
 
-    i = 0
-    while (datasort[i]["x"] > 0.45):
-        logger.info(datasort[i])
-        x=datasort[i]["x"]
-        logger.info("起点"+str(origin("hdan.png")))
-        logger.info('目标点(%s,%s)'%(x, origin('hdan.png')[1]))
-        d.swipe_points([origin('hdan.png'), (x, origin('hdan.png')[1])], 0.05)
 
-        Screen()
-        file_path = "./logs/1.1.png"
-        image = Image.open(file_path)
-        vcode = pytesseract.image_to_string(image, lang="chi_sim")
-        logger.info(vcode)
+    for i in datasort:
+        if  (0.882 > i["x"] > 0.71):
+            logger.info(i)
+            x = i["x"]
+            print(x)
+            logger.info("起点" + str(origin("hdan.png")))
+            logger.info('目标点(%s,%s)' % (x, origin('hdan.png')[1]))
+            d.swipe_points([origin('hdan.png'), (x, origin('hdan.png')[1])], 0.05)
 
-        if "拖 动 下 方 滑 块 完 成 拼 图"in vcode:
-            x = int(869.4 - (1080 - sp[1]) / 2)/sp[1]
-            y = int(1511.04 - (1920 - sp[0]) / 2)/sp[0]
-            logger.info("刷新"+str((x,y)))
-            d.click(x,y)
-            Sliding()
+            Screen()
+            file_path = "./logs/1.1.png"
+            image = Image.open(file_path)
+            vcode = pytesseract.image_to_string(image, lang="chi_sim")
+            logger.info(vcode)
 
-        i = i + 1
-        if i > len(datasort)-1:  # 当i大于10时跳出循环
-            break
+            if "拖 动 下 方 滑 块 完 成 拼 图" == vcode:
+                x = int(869.4 - (1080 - sp[1]) / 2) / sp[1]
+                y = int(1511.04 - (1920 - sp[0]) / 2) / sp[0]
+                logger.info("刷新" + str((x, y)))
+                d.click(x, y)
+                Sliding()
+
+
+
+
 
 
 
