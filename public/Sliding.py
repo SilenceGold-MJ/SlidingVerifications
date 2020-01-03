@@ -61,11 +61,12 @@ def Sliding():
         }
         list_dic.append(dic_ls)
     datasort = sorted(list_dic, key=lambda e: e.__getitem__('val'))  #
+    #logger.info(datasort)
 
 
 
     for i in datasort:
-        if  (0.882 > i["x"] > 0.71):
+        if  (0.882 > i["x"] > 0.72):
             logger.info(i)
             x = i["x"]
             logger.info("起点" + str(origin("hdan.png")))
@@ -88,7 +89,8 @@ def Sliding():
                 Sliding()
             else:
                 logger.info('滑动验证通过')
-        break
+                break
+            break
 
 
 
