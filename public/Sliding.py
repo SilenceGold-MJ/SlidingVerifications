@@ -1,4 +1,4 @@
-import cv2,os
+import cv2,os,time
 import pytesseract
 from PIL import Image
 import numpy as np
@@ -8,6 +8,7 @@ from framework.logger import Logger
 logger = Logger(logger="Sliding").getlog()
 d = u2.connect()
 def Screen():
+    d.screenshot("./logs/1.png")
     file_path = './logs/1.png'
     sv_path = './logs/1.1.png'
     img = cv2.imdecode(np.fromfile(file_path, dtype=np.uint8), -1)
@@ -35,6 +36,8 @@ def origin(imgae):
     return (x1,y1)
 
 def Sliding():
+    logger.info('开始滑动验证……')
+    time.sleep(1.5)
     d.screenshot("./logs/1.png")
     list_dic =[]
     # 读取目标图片
@@ -53,22 +56,23 @@ def Sliding():
         # 对于其他方法max_val越趋近于1匹配度越好，匹配位置取max_loc
         dic_ls={
             "val":min_val,
-            "x":((min_loc[0] ) / target.shape[1]),
+            "x":((min_loc[0] +twidth) / target.shape[1]),
             "imgae":i,
         }
         list_dic.append(dic_ls)
     datasort = sorted(list_dic, key=lambda e: e.__getitem__('val'))  #
-    #logger.info(datasort)
+
 
 
     for i in datasort:
         if  (0.882 > i["x"] > 0.71):
             logger.info(i)
             x = i["x"]
-            print(x)
             logger.info("起点" + str(origin("hdan.png")))
             logger.info('目标点(%s,%s)' % (x, origin('hdan.png')[1]))
             d.swipe_points([origin('hdan.png'), (x, origin('hdan.png')[1])], 0.05)
+            logger.info('执行滑动验证,等待4s')
+            time.sleep(4)
 
             Screen()
             file_path = "./logs/1.1.png"
@@ -79,9 +83,18 @@ def Sliding():
             if "拖 动 下 方 滑 块 完 成 拼 图" == vcode:
                 x = int(869.4 - (1080 - sp[1]) / 2) / sp[1]
                 y = int(1511.04 - (1920 - sp[0]) / 2) / sp[0]
-                logger.info("刷新" + str((x, y)))
+                logger.info("没有验证通过，刷新" + str((x, y)))
                 d.click(x, y)
                 Sliding()
+            else:
+                logger.info('滑动验证通过')
+        break
+
+
+
+
+
+
 
 
 
